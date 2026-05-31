@@ -9,8 +9,8 @@
   <meta name="apple-mobile-web-app-title" content="DocNear"/>
   <meta name="description" content="Find doctors and book appointments instantly"/>
   <title>DocNear – Book Doctor Appointments</title>
-  <link rel="manifest" href="manifest.json"/>
-  <link rel="stylesheet" href="DocNear.css"/>
+  <link rel="manifest" href="manifest-1.json"/>
+  <link rel="stylesheet" href="DocNear-1.css"/>
 </head>
 <body>
 
@@ -355,7 +355,7 @@
 <!-- ═══ SCRIPTS ════════════════════════════════════════════ -->
 <!-- Razorpay SDK -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="DocNear.js"></script>
+<script src="DocNear-1.js"></script>
 <script>
 // Helper
 function $(id){ return document.getElementById(id); }
@@ -383,7 +383,7 @@ window.addEventListener('appinstalled',()=>{ $('pwa-banner').style.display='none
 
 // Service Worker
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js')
+  navigator.serviceWorker.register('./sw-1.js')
     .then(()=>console.log('✅ DocNear SW registered'))
     .catch(e=>console.log('SW:',e));
 }

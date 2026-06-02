@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>DocNear Health Super App v2</title>
+
+<meta name="theme-color" content="#0A7FAF">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f5f7fa;color:#1a2b3c;}
+
+/* NAV */
+.navbar{
+background:#fff;
+padding:12px 18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+position:sticky;top:0;
+}
+
+.logo{font-size:20px;font-weight:bold;color:#0A7FAF;cursor:pointer;}
+.logo span{color:#FF6B35;}
+
+.btn{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;}
+.primary{background:#0A7FAF;color:#fff;}
+.orange{background:#FF6B35;color:#fff;}
+
+/* PAGE */
+.page{display:none;padding:20px;}
+.active{display:block;}
+
+/* HERO */
+.hero{
+background:linear-gradient(135deg,#0A7FAF,#085F8A);
+color:white;
+padding:40px 20px;
+text-align:center;
+border-radius:0 0 20px 20px;
+}
+
+.hero h1{font-size:40px;}
+.hero p{opacity:.9;margin-top:8px;}
+
+/* CARDS */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+text-align:center;
+cursor:pointer;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+transition:.2s;
+}
+
+.card:hover{transform:scale(1.05);}
+
+.icon{font-size:35px;margin-bottom:8px;}
+
+/* FORM */
+.box{
+max-width:400px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+.full{width:100%;}
+
+/* TOAST */
+#toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+color:white;
+padding:10px 15px;
+border-radius:8px;
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="toast"></div>
+
+<!-- NAV -->
+<div class="navbar">
+<div class="logo" onclick="go('landing')">
+🩺 Doc<span>Near</span>
+</div>
+
+<div>
+<button class="btn primary" onclick="go('patientLogin')">Patient</button>
+<button class="btn orange" onclick="go('doctorLogin')">Doctor</button>
+</div>
+</div>
+
+<!-- LANDING -->
+<div id="page-landing" class="page active">
+
+<div class="hero">
+<h1>DocNear</h1>
+<p>Doctors • Labs • Ambulance • Medical Stores</p>
+</div>
+
+<div class="grid">
+
+<div class="card" onclick="go('doctorSearch')">
+<div class="icon">👨‍⚕️</div>
+Doctors
+</div>
+
+<div class="card" onclick="go('medicalStores')">
+<div class="icon">💊</div>
+Medical Stores
+</div>
+
+<div class="card" onclick="go('ambulance')">
+<div class="icon">🚑</div>
+Ambulance
+</div>
+
+<div class="card" onclick="go('labs')">
+<div class="icon">🔬</div>
+Labs
+</div>
+
+</div>
+</div>
+
+<!-- PATIENT LOGIN -->
+<div id="page-patientLogin" class="page">
+<div class="box">
+<h2>Patient Login</h2>
+
+<input id="pl-email" placeholder="Email">
+<input id="pl-pass" type="password" placeholder="Password">
+
+<button class="btn primary full" onclick="patientLogin()">
+Login
+</button>
+</div>
+</div>
+
+<!-- DOCTOR LOGIN -->
+<div id="page-doctorLogin" class="page">
+<div class="box">
+<h2>Doctor Login</h2>
+
+<input id="dl-email" placeholder="Email">
+<input id="dl-pass" type="password" placeholder="Password">
+
+<button class="btn orange full" onclick="doctorLogin()">
+Login
+</button>
+</div>
+</div>
+
+<!-- SIMPLE MODULE PAGES -->
+<div id="page-doctorSearch" class="page">
+<h2>Doctors List</h2>
+<p>Coming from Supabase later...</p>
+</div>
+
+<div id="page-medicalStores" class="page">
+<h2>Medical Stores</h2>
+<p>Nearby pharmacies will show here.</p>
+</div>
+
+<div id="page-ambulance" class="page">
+<h2>Ambulance Service</h2>
+<p>Emergency booking system.</p>
+</div>
+
+<div id="page-labs" class="page">
+<h2>Lab Tests</h2>
+<p>Book diagnostic labs.</p>
+</div>
+
+<script>
+
+/* NAVIGATION */
+function go(page){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
+});
+
+const el=document.getElementById("page-"+page);
+
+if(el){
+el.classList.add("active");
+}else{
+toast("Page not found");
+}
+}
+
+/* TOAST */
+function toast(msg){
+const t=document.getElementById("toast");
+t.innerText=msg;
+t.style.display="block";
+setTimeout(()=>t.style.display="none",2000);
+}
+
+/* PATIENT LOGIN */
+function patientLogin(){
+
+let email=document.getElementById("pl-email").value;
+let pass=document.getElementById("pl-pass").value;
+
+if(!email || !pass){
+toast("Fill all fields");
+return;
+}
+
+toast("Patient Login Success");
+go("landing");
+}
+
+/* DOCTOR LOGIN */
+function doctorLogin(){
+
+let email=document.getElementById("dl-email").value;
+let pass=document.getElementById("dl-pass").value;
+
+if(!email || !pass){
+toast("Fill all fields");
+return;
+}
+
+toast("Doctor Login Success");
+go("landing");
+}
+
+/* INIT */
+window.onload=()=>{
+go("landing");
+};
+
+</script>
+
+</body>
+  </html>

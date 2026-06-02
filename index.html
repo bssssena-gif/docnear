@@ -233,7 +233,13 @@ el.classList.add("active");
 }else{
 toast("Page not found");
 }
+
+/* DOCTORS LOAD */
+if(page === "doctorSearch"){
+loadDoctors();
 }
+
+  }
 
 /* TOAST */
 function toast(msg){

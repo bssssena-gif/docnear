@@ -732,3 +732,190 @@ window.onload = () => {
 };
 
 </script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DocNear</title>
+
+<style>
+body{
+  font-family:Arial;
+  margin:0;
+  background:#f3f6fa;
+}
+
+.nav{
+  background:#0a7faf;
+  color:white;
+  padding:12px;
+}
+
+.page{
+  display:none;
+  padding:15px;
+}
+
+.active{
+  display:block;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  margin:10px 0;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-primary{
+  background:#0a7faf;
+  color:white;
+  padding:8px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+input{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+  🩺 DocNear Health App
+</div>
+
+<!-- LANDING -->
+<div id="page-landing" class="page active">
+
+  <h2>Services</h2>
+
+  <div class="card" onclick="go('search')">
+    👨‍⚕️ Doctors
+  </div>
+
+  <div class="card">
+    💊 Medical Stores
+  </div>
+
+  <div class="card">
+    🚑 Ambulance
+  </div>
+
+  <div class="card">
+    🔬 Labs
+  </div>
+
+</div>
+
+<!-- PATIENT LOGIN -->
+<div id="page-patientLogin" class="page">
+
+<h2>Patient Login</h2>
+
+<input id="pl-email" placeholder="Email">
+<input id="pl-password" placeholder="Password">
+
+<button class="btn-primary" onclick="patientLogin()">
+Login
+</button>
+
+</div>
+
+<!-- SEARCH -->
+<div id="page-search" class="page">
+
+<h2>Find Doctors</h2>
+
+<div class="card">
+  <h3>Dr. John</h3>
+  <p>Cardiologist</p>
+  <button class="btn-primary" onclick="go('profile')">
+  View Profile
+  </button>
+</div>
+
+</div>
+
+<!-- PROFILE -->
+<div id="page-profile" class="page">
+
+<h2>Doctor Profile</h2>
+
+<div class="card">
+  <h3>Dr. John</h3>
+  <p>MBBS, MD</p>
+
+  <button class="btn-primary" onclick="go('book')">
+    Book Appointment
+  </button>
+</div>
+
+</div>
+
+<!-- BOOK -->
+<div id="page-book" class="page">
+
+<h2>Book Appointment</h2>
+
+<div class="card">
+
+<input type="date">
+<input type="time">
+
+<button class="btn-primary" onclick="alert('Booked Successfully')">
+Confirm
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+/* NAVIGATION */
+function go(page){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  const el = document.getElementById("page-" + page);
+
+  if(el){
+    el.classList.add("active");
+  }
+
+}
+
+/* LOGIN */
+function patientLogin(){
+
+  let email = document.getElementById("pl-email").value;
+  let pass = document.getElementById("pl-password").value;
+
+  if(!email || !pass){
+    alert("Fill all fields");
+    return;
+  }
+
+  alert("Login Success");
+
+  go("landing");
+}
+
+/* START */
+window.onload = () => {
+  go("landing");
+};
+
+</script>
+
+</body>
+</html>

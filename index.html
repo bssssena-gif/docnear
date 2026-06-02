@@ -265,8 +265,17 @@ go("landing");
 
 /* INIT */
 window.onload=()=>{
+
 go("landing");
+
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("./sw.js");
+}
+
 };
+
+
+
 
 </script>
 <script src="DocNear.js"></script>

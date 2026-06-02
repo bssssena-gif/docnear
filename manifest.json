@@ -1,0 +1,8 @@
+{
+  "name":"DocNear",
+  "short_name":"DocNear",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#ffffff",
+  "theme_color":"#0A7FAF"
+}

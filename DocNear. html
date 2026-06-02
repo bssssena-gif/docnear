@@ -369,3 +369,221 @@ Labs
 </div>
 
 </div>
+<!-- =========================
+     PATIENT LOGIN
+========================= -->
+
+<div id="page-patientLogin"
+class="page">
+
+<div class="auth-wrap">
+
+<div class="auth-box">
+
+<h2 class="auth-title">
+Patient Login
+</h2>
+
+<p class="auth-sub">
+Login to your account
+</p>
+
+<div class="form-group">
+<label>Email</label>
+<input
+id="pl-email"
+type="email"
+class="form-input">
+</div>
+
+<div class="form-group">
+<label>Password</label>
+<input
+id="pl-password"
+type="password"
+class="form-input">
+</div>
+
+<button
+class="btn-full btn-primary"
+onclick="patientLogin()">
+
+Login
+
+</button>
+
+<br><br>
+
+<button
+class="btn-full btn-orange"
+onclick="go('patientRegister')">
+
+Create Account
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================
+     PATIENT REGISTER
+========================= -->
+
+<div id="page-patientRegister"
+class="page">
+
+<div class="auth-wrap">
+
+<div class="auth-box">
+
+<h2 class="auth-title">
+Patient Register
+</h2>
+
+<p class="auth-sub">
+Create new account
+</p>
+
+<div class="form-group">
+<label>Full Name</label>
+<input
+id="pr-name"
+class="form-input">
+</div>
+
+<div class="form-group">
+<label>Email</label>
+<input
+id="pr-email"
+type="email"
+class="form-input">
+</div>
+
+<div class="form-group">
+<label>Password</label>
+<input
+id="pr-password"
+type="password"
+class="form-input">
+</div>
+
+<div class="form-group">
+<label>Phone</label>
+<input
+id="pr-phone"
+class="form-input">
+</div>
+
+<button
+class="btn-full btn-primary"
+onclick="patientRegister()">
+
+Register
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================
+     DOCTOR LOGIN
+========================= -->
+
+<div id="page-doctorLogin"
+class="page">
+
+<div class="auth-wrap">
+
+<div class="auth-box">
+
+<h2 class="auth-title">
+Doctor Login
+</h2>
+
+<p class="auth-sub">
+Doctor Account Login
+</p>
+
+<div class="form-group">
+<label>Email</label>
+<input
+id="dl-email"
+type="email"
+class="form-input">
+</div>
+
+<div class="form-group">
+<label>Password</label>
+<input
+id="dl-password"
+type="password"
+class="form-input">
+</div>
+
+<button
+class="btn-full btn-orange">
+
+Doctor Login
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================
+     ADMIN LOGIN
+========================= -->
+
+<div id="page-adminLogin"
+class="page">
+
+<div class="auth-wrap">
+
+<div class="auth-box">
+
+<h2 class="auth-title">
+Admin Login
+</h2>
+
+<p class="auth-sub">
+DocNear Administration
+</p>
+
+<div class="form-group">
+<label>Email</label>
+<input
+class="form-input">
+</div>
+
+<div class="form-group">
+<label>Password</label>
+<input
+type="password"
+class="form-input">
+</div>
+
+<button
+class="btn-full"
+style="
+background:#111;
+color:white;
+">
+
+Admin Login
+
+</button>
+
+</div>
+
+</div>
+
+</div>

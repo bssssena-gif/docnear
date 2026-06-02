@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>DocNear Health Super App</title>
+
+<meta name="theme-color" content="#0A7FAF">
+
+<link rel="manifest" href="manifest.json">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,sans-serif;
+background:#F5F7FA;
+color:#1A2B3C;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar{
+height:65px;
+background:#fff;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+color:#0A7FAF;
+cursor:pointer;
+}
+
+.logo span{
+color:#FF6B35;
+}
+
+.nav-btn{
+padding:10px 16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn-primary{
+background:#0A7FAF;
+color:white;
+}
+
+.btn-orange{
+background:#FF6B35;
+color:white;
+}
+
+/* =========================
+   PAGE SYSTEM
+========================= */
+
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+padding:60px 20px;
+text-align:center;
+background:
+linear-gradient(
+135deg,
+#0A7FAF,
+#085F8A
+);
+color:white;
+}
+
+.hero h1{
+font-size:48px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:18px;
+opacity:.9;
+}
+
+.hero-search{
+max-width:600px;
+margin:25px auto;
+display:flex;
+gap:10px;
+}
+
+.hero-search input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+}
+
+.hero-search button{
+padding:14px 20px;
+border:none;
+border-radius:12px;
+background:#FF6B35;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* =========================
+   SERVICES
+========================= */
+
+.services{
+padding:30px 20px;
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+}
+
+.card{
+background:white;
+border-radius:18px;
+padding:20px;
+text-align:center;
+box-shadow:
+0 3px 10px rgba(0,0,0,.08);
+cursor:pointer;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.card-icon{
+font-size:40px;
+margin-bottom:12px;
+}
+
+.card-title{
+font-weight:bold;
+font-size:18px;
+margin-bottom:8px;
+}
+
+/* =========================
+   AUTH BOX
+========================= */
+
+.auth-wrap{
+max-width:500px;
+margin:40px auto;
+padding:20px;
+}
+
+.auth-box{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:
+0 4px 15px rgba(0,0,0,.08);
+}
+
+.auth-title{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.auth-sub{
+color:#666;
+margin-bottom:20px;
+}
+
+.form-group{
+margin-bottom:14px;
+}
+
+.form-group label{
+display:block;
+margin-bottom:6px;
+font-size:14px;
+font-weight:bold;
+}
+
+.form-input{
+width:100%;
+padding:12px;
+border:1px solid #DDD;
+border-radius:10px;
+}
+
+.btn-full{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+color:white;
+padding:12px 18px;
+border-radius:10px;
+display:none;
+z-index:9999;
+}
+
+#toast.show{
+display:block;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:36px;
+}
+
+.hero-search{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="toast"></div>
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div class="navbar">
+
+<div class="logo"
+onclick="go('landing')">
+🩺 Doc<span>Near</span>
+</div>
+
+<div>
+
+<button
+class="nav-btn btn-primary"
+onclick="go('patientLogin')">
+Patient Login
+</button>
+
+<button
+class="nav-btn btn-orange"
+onclick="go('doctorLogin')">
+Doctor Login
+</button>
+
+</div>
+
+</div>
+
+<!-- =========================
+     LANDING PAGE
+========================= -->
+
+<div
+id="page-landing"
+class="page active">
+
+<div class="hero">
+
+<h1>DocNear</h1>
+
+<p>
+Doctors • Medical Stores
+• Ambulance • Labs
+</p>
+
+<div class="hero-search">
+
+<input
+type="text"
+placeholder="Search Doctors..." >
+
+<button>
+Search
+</button>
+
+</div>
+
+</div>
+
+<div class="services">
+
+<div class="card">
+<div class="card-icon">👨‍⚕️</div>
+<div class="card-title">
+Doctors
+</div>
+</div>
+
+<div class="card">
+<div class="card-icon">💊</div>
+<div class="card-title">
+Medical Stores
+</div>
+</div>
+
+<div class="card">
+<div class="card-icon">🚑</div>
+<div class="card-title">
+Ambulance
+</div>
+</div>
+
+<div class="card">
+<div class="card-icon">🔬</div>
+<div class="card-title">
+Labs
+</div>
+</div>
+
+</div>
+
+</div>

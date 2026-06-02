@@ -587,3 +587,148 @@ Admin Login
 </div>
 
 </div>
+<script>
+/* ==========================
+   SUPABASE CONFIG
+========================== */
+
+const SUPABASE_URL =
+"https://avonzvocvonvzamedwvh.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wvfdYDM_JGE8q5NrcYl0EQ_tDOTBL2I";
+
+/* ==========================
+   APP STATE
+========================== */
+
+const APP = {
+  currentPage: "landing",
+  user: null
+};
+
+/* ==========================
+   TOAST
+========================== */
+
+function showToast(msg){
+  alert(msg);
+}
+
+/* ==========================
+   PAGE NAVIGATION
+========================== */
+
+function go(page){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(p => p.style.display="none");
+
+  const target =
+    document.getElementById(
+      "page-" + page
+    );
+
+  if(target){
+    target.style.display = "block";
+  }
+
+  APP.currentPage = page;
+}
+
+/* ==========================
+   PATIENT REGISTER
+========================== */
+
+function patientRegister(){
+
+  const name =
+    document.getElementById(
+      "pr-name"
+    ).value.trim();
+
+  const email =
+    document.getElementById(
+      "pr-email"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "pr-password"
+    ).value.trim();
+
+  const phone =
+    document.getElementById(
+      "pr-phone"
+    ).value.trim();
+
+  if(
+    !name ||
+    !email ||
+    !password
+  ){
+    showToast(
+      "Fill all required fields"
+    );
+    return;
+  }
+
+  showToast(
+    "Patient Registration Saved"
+  );
+
+  console.log({
+    name,
+    email,
+    phone
+  });
+
+  go("patientLogin");
+}
+
+/* ==========================
+   PATIENT LOGIN
+========================== */
+
+function patientLogin(){
+
+  const email =
+    document.getElementById(
+      "pl-email"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "pl-password"
+    ).value.trim();
+
+  if(
+    !email ||
+    !password
+  ){
+    showToast(
+      "Enter email & password"
+    );
+    return;
+  }
+
+  APP.user = {
+    email
+  };
+
+  showToast(
+    "Login Success"
+  );
+
+}
+
+/* ==========================
+   INITIAL PAGE
+========================== */
+
+window.onload = () => {
+  go("landing");
+};
+
+</script>

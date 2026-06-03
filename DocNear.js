@@ -43,3 +43,101 @@ async function loadDoctors(){
 
   box.innerHTML = html;
 }
+async function loadMedicalStores(){
+
+const box = document.getElementById("medicalStoreList");
+
+if(!box) return;
+
+const { data, error } = await supabaseClient
+.from("medical_stores")
+.select("*");
+
+if(error){
+box.innerHTML = error.message;
+return;
+}
+
+let html = "";
+
+data.forEach(store => {
+
+html += `
+<div class="card">
+<h3>${store.store_name || ""}</h3>
+<p>${store.city || ""}</p>
+<p>${store.phone || ""}</p>
+</div>
+`;
+
+});
+
+box.innerHTML = html;
+
+}
+
+async function loadLabs(){
+
+const box = document.getElementById("labList");
+
+if(!box) return;
+
+const { data, error } = await supabaseClient
+.from("labs")
+.select("*");
+
+if(error){
+box.innerHTML = error.message;
+return;
+}
+
+let html = "";
+
+data.forEach(lab => {
+
+html += `
+<div class="card">
+<h3>${lab.lab_name || ""}</h3>
+<p>${lab.city || ""}</p>
+<p>${lab.phone || ""}</p>
+</div>
+`;
+
+});
+
+box.innerHTML = html;
+
+}
+
+async function loadAmbulances(){
+
+const box = document.getElementById("ambulanceList");
+
+if(!box) return;
+
+const { data, error } = await supabaseClient
+.from("ambulance_providers")
+.select("*");
+
+if(error){
+box.innerHTML = error.message;
+return;
+}
+
+let html = "";
+
+data.forEach(item => {
+
+html += `
+<div class="card">
+<h3>${item.provider_name || ""}</h3>
+<p>${item.city || ""}</p>
+<p>${item.phone || ""}</p>
+</div>
+`;
+
+});
+
+box.innerHTML = html;
+
+  }

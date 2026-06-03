@@ -142,7 +142,40 @@ async function loadAmbulances(){
 
 }
 
+async function patientRegister(){
 
+  const name = document.getElementById("pr-name").value.trim();
+  const email = document.getElementById("pr-email").value.trim();
+  const phone = document.getElementById("pr-phone").value.trim();
+  const password = document.getElementById("pr-password").value.trim();
+
+  if(!name || !email || !password){
+    toast("Fill all required fields");
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("patients")
+    .insert([
+      {
+        name: name,
+        email: email,
+        phone: phone,
+        password: password
+      }
+    ]);
+
+  if(error){
+    console.log(error);
+    toast("Register Failed: " + error.message);
+    return;
+  }
+
+  toast("Patient Registered Successfully");
+
+  // login page కి redirect
+  go("patientLogin");
+}
 
 
 

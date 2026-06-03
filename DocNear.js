@@ -111,33 +111,63 @@ box.innerHTML = html;
 
 async function loadAmbulances(){
 
-const box = document.getElementById("ambulanceList");
+  const box = document.getElementById("ambulanceList");
 
-if(!box) return;
+  if(!box) return;
 
-const { data, error } = await supabaseClient
-.from("ambulance_providers")
-.select("*");
+  const { data, error } = await supabaseClient
+    .from("ambulance_providers")
+    .select("*");
 
-if(error){
-box.innerHTML = error.message;
-return;
+  if(error){
+    box.innerHTML = error.message;
+    return;
+  }
+
+  let html = "";
+
+  data.forEach(item => {
+
+    html += `
+      <div class="card">
+        <h3>${item.provider_name || ""}</h3>
+        <p>${item.city || ""}</p>
+        <p>${item.phone || ""}</p>
+      </div>
+    `;
+
+  });
+
+  box.innerHTML = html;
+
 }
 
-let html = "";
 
-data.forEach(item => {
 
-html += `
-<div class="card">
-<h3>${item.provider_name || ""}</h3>
-<p>${item.city || ""}</p>
-<p>${item.phone || ""}</p>
-</div>
-`;
 
-});
 
-box.innerHTML = html;
 
-  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

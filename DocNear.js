@@ -335,7 +335,7 @@ async function doctorLogin(){
   finally{if(btn){btn.disabled=false;btn.textContent=T("login");}}
 }
 function adminLogin(){
-  const email=gv("al-email"),pw=gv("al-pw");
+  const email=gv("l-email"),pw=gv("l-pw");
   if(email==="admin@docnear.com"&&pw==="admin123"){
     APP.user={name:"Admin",email}; APP.userType="admin";
     window.location.href="admin.html"; return;

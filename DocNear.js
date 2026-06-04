@@ -1222,3 +1222,24 @@ document.addEventListener("DOMContentLoaded", async()=>{
   DB.get("doctors","approved=eq.true&limit=1").then(()=>{APP.isDemo=false;}).catch(()=>{APP.isDemo=true;});
   rLanding();
 });
+function showPartnerOptions() {
+  const choice = prompt(
+    "Choose Registration:\n\n" +
+    "1 = Doctor\n" +
+    "2 = Ambulance\n" +
+    "3 = Lab\n" +
+    "4 = Medical Store"
+  );
+
+  if (choice === "1")
+    location.href = "register.html?role=doctor";
+
+  else if (choice === "2")
+    location.href = "register.html?role=ambulance_driver";
+
+  else if (choice === "3")
+    location.href = "register.html?role=lab";
+
+  else if (choice === "4")
+    location.href = "register.html?role=medical_store";
+}

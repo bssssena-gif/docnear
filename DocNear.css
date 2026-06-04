@@ -296,3 +296,17 @@ textarea.form-input{resize:vertical;min-height:80px}
 
 /* ── AMBULANCE ────────────────────────────────── */
 .ambu-equip{font-size:11px;background:#F0FDF4;color:#059669;padding:3px 8px;border-radius:8px;font-weight:600}
+.join-btn{
+  width:90%;
+  max-width:400px;
+  display:block;
+  margin:15px auto;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:600;
+  background:#0A7FAF;
+  color:white;
+  cursor:pointer;
+}

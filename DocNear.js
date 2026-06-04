@@ -1246,3 +1246,6 @@ function showPartnerOptions() {
 window.showPartnerOptions = function() {
   alert("Button Working");
 };
+function showPartnerOptions() {
+  alert("Join Button Working");
+}

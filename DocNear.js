@@ -1243,3 +1243,6 @@ function showPartnerOptions() {
   else if (choice === "4")
     location.href = "register.html?role=medical_store";
 }
+window.showPartnerOptions = function() {
+  alert("Button Working");
+};

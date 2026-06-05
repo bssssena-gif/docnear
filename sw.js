@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   DocNear – Service Worker v3
+   DocNear – Service Worker v4
    File: sw.js (same folder as DocNear.html)
    ═══════════════════════════════════════════════ */
 

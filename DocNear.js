@@ -1,4 +1,4 @@
-/* DocNear V3 – Complete Production App */
+/* DocNear V10 – Complete Production App */
 const SURL = "https://avonzvocvonvzamedwvh.supabase.co";
 const SKEY = "sb_publishable_wvfdYDM_JGE8q5NrcYl0EQ_tDOTBL2I";
 const SK   = "dn_session_v10";

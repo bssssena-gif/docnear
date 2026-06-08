@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════
-   DocNear – Service Worker v3
+   DocNear – Service Worker v4
    File: sw.js (same folder as DocNear.html)
    ═══════════════════════════════════════════════ */
 
-const CACHE_NAME = "docnear-v3";
+const CACHE_NAME = "docnear-v4";
 const STATIC_ASSETS = [
   "./DocNear.html",
   "./DocNear.css",
@@ -36,7 +36,19 @@ self.addEventListener("activate", event => {
 /* ── Fetch: smart cache strategy ── */
 self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
-
+  /* HTML pages → Network First */
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          return res;
+        })
+        .catch(() => caches.match("./DocNear.html"))
+    );
+    return;
+  }
   /* Supabase API → always network (live data) */
   if (url.hostname.includes("supabase.co")) {
     event.respondWith(

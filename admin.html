@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#1A2B3C"/>
+  <title>DocNear Admin Panel — 100% Complete</title>
+  <link rel="stylesheet" href="DocNear.css"/>
+  <style>
+    body{background:#0F1923}
+    .layout{display:flex;min-height:100vh}
+    .sidebar{width:240px;flex-shrink:0;background:linear-gradient(180deg,#1A2B3C 0%,#0F1923 100%);min-height:100vh;position:sticky;top:0;display:flex;flex-direction:column;padding-bottom:20px;overflow-y:auto;transition:left .3s ease}
+    .sb-logo{padding:18px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px}
+    .sb-logo .lbox{width:36px;height:36px;background:linear-gradient(135deg,#0A7FAF,#085F8A);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+    .sb-logo span{font-family:'Lora',serif;font-size:17px;color:#fff}
+    .sb-logo span em{color:#3ECF8E;font-style:normal}
+    .sb-user{padding:10px 14px;margin:0 8px 6px;background:rgba(255,255,255,.06);border-radius:12px}
+    .sb-uname{font-size:13px;font-weight:700;color:#fff;margin-bottom:1px}
+    .sb-urole{font-size:11px;color:#3ECF8E;font-weight:600}
+    .sb-sec{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);padding:10px 20px 4px;letter-spacing:1.2px;text-transform:uppercase}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;color:rgba(255,255,255,.65);font-size:13px;font-weight:600;transition:all .2s;background:none;border:none;width:100%;text-align:left;font-family:inherit}
+    .sb-item:hover{background:rgba(255,255,255,.07);color:#fff}
+    .sb-item.active{background:rgba(10,127,175,.25);color:#fff;border-left:3px solid #0A7FAF}
+    .sb-item .ico{font-size:15px;flex-shrink:0;width:20px;text-align:center}
+    .sb-bdg{margin-left:auto;color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:18px;text-align:center;display:none}
+    .sb-bdg.red{background:#EF4444}
+    .sb-bdg.grn{background:#10B981}
+    .sb-bdg.org{background:#F59E0B}
+    .sb-logout{margin-top:auto;padding:8px 16px}
+    .main{flex:1;background:#F3F6FA;overflow-y:auto;min-height:100vh}
+    .topbar{background:#fff;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:50}
+    .topbar-title{font-size:17px;font-weight:700;color:#1A2B3C}
+    .content{padding:22px;max-width:1200px}
+    .tab{display:none;animation:fadeUp .3s ease}
+    .tab.active{display:block}
+    .tbl{width:100%;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+    .tbl th{background:#F9FAFB;padding:11px 14px;text-align:left;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #E5E7EB;white-space:nowrap}
+    .tbl td{padding:11px 14px;border-bottom:1px solid #F3F4F6;font-size:13px;color:#1A2B3C;vertical-align:middle}
+    .tbl tr:last-child td{border-bottom:none}
+    .tbl tr:hover td{background:#FAFAFA}
+    .tbl-wrap{overflow-x:auto}
+    .dcard{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px}
+    .dcard-title{font-size:14px;font-weight:700;color:#1A2B3C;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+    .info-item{background:#F9FAFB;border-radius:8px;padding:9px 12px}
+    .info-lbl{font-size:10px;color:#9CA3AF;margin-bottom:2px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+    .info-val{font-size:13px;font-weight:600;color:#1A2B3C;word-break:break-word}
+    .mob-menu-btn{display:none;background:none;border:none;cursor:pointer;font-size:22px;color:#1A2B3C}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+    #login-screen{min-height:100vh;background:linear-gradient(135deg,#0F1923,#1A2B3C);display:flex;align-items:center;justify-content:center;padding:20px}
+    .login-box{background:#fff;border-radius:20px;padding:38px 34px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+    /* Chart bars */
+    .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .bar-lbl{width:120px;font-size:12px;color:#374151;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .bar-track{flex:1;background:#F3F4F6;border-radius:6px;height:8px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:6px;transition:width .8s ease}
+    .bar-val{font-size:12px;font-weight:700;color:#1A2B3C;width:32px;text-align:right;flex-shrink:0}
+    /* Notif form */
+    .notif-type-btn{padding:8px 14px;border-radius:8px;border:1.5px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .15s}
+    .notif-type-btn.active{border-color:#0A7FAF;background:#E3F4FC;color:#0A7FAF}
+    /* KYC doc card */
+    .kyc-doc{background:#F9FAFB;border-radius:10px;padding:12px 14px;border:1.5px solid #E5E7EB;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .kyc-doc.verified{border-color:#A7F3D0;background:#F0FDF4}
+    .kyc-doc.rejected{border-color:#FECACA;background:#FEF2F2}
+    .kyc-doc.pending{border-color:#FDE68A;background:#FFFBEB}
+    /* Revenue cards */
+    .rev-card{background:linear-gradient(135deg,#0A7FAF,#085F8A);border-radius:16px;padding:20px;color:#fff}
+    /* Mobile */
+    @media(max-width:768px){
+      .sidebar{position:fixed;left:-240px;top:0;z-index:100}
+      .sidebar.open{left:0}
+      .overlay.show{display:block}
+      .mob-menu-btn{display:flex}
+      .content{padding:14px}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ════════════════ LOGIN SCREEN ════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div style="text-align:center;margin-bottom:26px">
+      <div style="width:58px;height:58px;background:linear-gradient(135deg,#0A7FAF,#085F8A);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px">🩺</div>
+      <div style="font-family:'Lora',serif;font-size:22px;color:#1A2B3C">Doc<span style="color:#0A7FAF">Near</span> <span style="font-size:13px;color:#9CA3AF">Admin</span></div>
+    </div>
+    <div class="alert" style="background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB;margin-bottom:18px;font-size:12px">🛡️ admin@docnear.com / admin123</div>
+    <div class="form-group"><label class="form-label">Email</label><input id="l-email" type="email" class="form-input" placeholder="admin@docnear.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="form-group"><label class="form-label">Password</label><input id="l-pw" type="password" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div id="l-err" style="display:none;background:#FEE2E2;color:#DC2626;padding:8px 12px;border-radius:8px;font-size:12px;margin-bottom:12px"></div>
+    <button id="l-btn" class="btn btn-dark btn-full" style="font-size:15px;padding:13px" onclick="doLogin()">🔐 Sign In</button>
+    <div style="text-align:center;margin-top:14px"><a href="DocNear.html" style="font-size:12px;color:#9CA3AF;text-decoration:none">← Back to DocNear App</a></div>
+  </div>
+</div>
+
+<!-- ════════════════ DASHBOARD ════════════════ -->
+<div id="dashboard" style="display:none">
+  <div class="overlay" id="overlay" onclick="closeSB()"></div>
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-logo">
+        <div class="lbox">🩺</div>
+        <span>Doc<em>Near</em> Admin</span>
+      </div>
+      <div class="sb-user">
+        <div class="sb-uname" id="sb-name">Admin</div>
+        <div class="sb-urole" id="sb-role">🛡️ Super Admin</div>
+      </div>
+
+      <div class="sb-sec">Overview</div>
+      <button class="sb-item active" onclick="showTab('overview')" id="nav-overview"><span class="ico">📊</span>Overview</button>
+
+      <div class="sb-sec">Approvals</div>
+      <button class="sb-item" onclick="showTab('pending')" id="nav-pending"><span class="ico">⏳</span>Doctor Approvals<span class="sb-bdg red" id="bdg-pending">0</span></button>
+      <button class="sb-item" onclick="showTab('store-approvals')" id="nav-store-approvals"><span class="ico">💊</span>Store Approvals<span class="sb-bdg red" id="bdg-stores">0</span></button>
+      <button class="sb-item" onclick="showTab('ambu-approvals')" id="nav-ambu-approvals"><span class="ico">🚑</span>Ambulance Approvals<span class="sb-bdg red" id="bdg-ambu">0</span></button>
+
+      <div class="sb-sec">Manage</div>
+      <button class="sb-item" onclick="showTab('doctors')" id="nav-doctors"><span class="ico">👨‍⚕️</span>Doctors<span class="sb-bdg grn" id="bdg-docs">0</span></button>
+      <button class="sb-item" onclick="showTab('patients')" id="nav-patients"><span class="ico">🤒</span>Patients<span class="sb-bdg grn" id="bdg-pats">0</span></button>
+      <button class="sb-item" onclick="showTab('stores')" id="nav-stores"><span class="ico">🏪</span>Medical Stores</button>
+      <button class="sb-item" onclick="showTab('ambulances')" id="nav-ambulances"><span class="ico">🚑</span>Ambulances</button>
+      <button class="sb-item" onclick="showTab('appointments')" id="nav-appointments"><span class="ico">📅</span>Appointments<span class="sb-bdg grn" id="bdg-appts">0</span></button>
+      <button class="sb-item" onclick="showTab('reviews')" id="nav-reviews"><span class="ico">⭐</span>Reviews</button>
+
+      <div class="sb-sec">Finance</div>
+      <button class="sb-item" onclick="showTab('earnings')" id="nav-earnings"><span class="ico">💰</span>Earnings & Revenue</button>
+
+      <div class="sb-sec">Insights</div>
+      <button class="sb-item" onclick="showTab('analytics')" id="nav-analytics"><span class="ico">📈</span>Analytics</button>
+
+      <div class="sb-sec">Communications</div>
+      <button class="sb-item" onclick="showTab('broadcast')" id="nav-broadcast"><span class="ico">🔔</span>Broadcast Notifications</button>
+
+      <div class="sb-sec">Verification</div>
+      <button class="sb-item" onclick="showTab('kyc')" id="nav-kyc"><span class="ico">📄</span>KYC Verification<span class="sb-bdg org" id="bdg-kyc">0</span></button>
+
+      <div class="sb-sec">System</div>
+      <button class="sb-item" onclick="showTab('admins')" id="nav-admins"><span class="ico">🛡️</span>Admin Management</button>
+      <button class="sb-item" onclick="showTab('support')" id="nav-support"><span class="ico">💬</span>Support Messages</button>
+      <button class="sb-item" onclick="refreshAll()"><span class="ico">🔄</span>Refresh Data</button>
+
+      <div class="sb-logout">
+        <button class="btn btn-ghost btn-full" onclick="doLogout()" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)!important;font-size:13px">🚪 Logout</button>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="mob-menu-btn" onclick="openSB()">☰</button>
+          <div class="topbar-title" id="pg-title">Overview</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="topbar-time" style="font-size:12px;color:#9CA3AF"></span>
+          <div style="width:30px;height:30px;background:linear-gradient(135deg,#1A2B3C,#2D4050);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#3ECF8E" id="sb-avatar">A</div>
+        </div>
+      </div>
+      <div class="content">
+
+        <!-- ── OVERVIEW ── -->
+        <div class="tab active" id="tab-overview">
+          <div class="stats-grid" id="ov-stats"><div class="loading-box" style="grid-column:1/-1"><div class="spinner"></div></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+            <div class="dcard"><div class="dcard-title">📅 Recent Appointments</div><div id="ov-appts"></div></div>
+            <div class="dcard"><div class="dcard-title">👨‍⚕️ Recent Registrations</div><div id="ov-docs"></div></div>
+          </div>
+          <div class="dcard"><div class="dcard-title">📊 Specialization Breakdown</div><div id="ov-spec"></div></div>
+        </div>
+
+        <!-- ── DOCTOR APPROVALS ── -->
+        <div class="tab" id="tab-pending">
+          <div id="pending-list"><div class="loading-box"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- ── STORE APPROVALS ── -->
+        <div class="tab" id="tab-store-approvals">
+          <div id="store-approvals-list"><div class="loading-box"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- ── AMBULANCE APPROVALS ── -->
+        <div class="tab" id="tab-ambu-approvals">
+          <div id="ambu-approvals-list"><div class="loading-box"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- ── DOCTORS ── -->
+        <div class="tab" id="tab-doctors">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div style="font-size:16px;font-weight:700;color:#1A2B3C">All Doctors</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="doc-q" class="form-input" placeholder="🔍 Search..." style="max-width:180px;padding:8px 12px" oninput="renderDoctors()"/>
+              <select id="doc-status" class="form-input" style="max-width:140px;padding:8px 12px" onchange="renderDoctors()"><option value="">All</option><option value="true">Approved</option><option value="false">Pending</option></select>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" style="border-collapse:collapse">
+            <thead><tr><th>#</th><th>Doctor</th><th>Specialization</th><th>Hospital / District</th><th>Fee</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="doc-tbody"></tbody>
+          </table></div>
+        </div>
+
+        <!-- ── PATIENTS ── -->
+        <div class="tab" id="tab-patients">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div style="font-size:16px;font-weight:700;color:#1A2B3C">All Patients</div>
+            <input id="pat-q" class="form-input" placeholder="🔍 Search..." style="max-width:200px;padding:8px 12px" oninput="renderPatients()"/>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" style="border-collapse:collapse">
+            <thead><tr><th>#</th><th>Patient</th><th>Contact</th><th>Age/Gender</th><th>Blood</th><th>Appointments</th></tr></thead>
+            <tbody id="pat-tbody"></tbody>
+          </table></div>
+        </div>
+
+        <!-- ── MEDICAL STORES ── -->
+        <div class="tab" id="tab-stores">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div style="font-size:16px;font-weight:700;color:#1A2B3C">All Medical Stores</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="store-q" class="form-input" placeholder="🔍 Search..." style="max-width:180px;padding:8px 12px" oninput="renderStores()"/>
+              <select id="store-status" class="form-input" style="max-width:130px;padding:8px 12px" onchange="renderStores()"><option value="">All</option><option value="true">Approved</option><option value="false">Pending</option></select>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" style="border-collapse:collapse">
+            <thead><tr><th>#</th><th>Store</th><th>Owner</th><th>Location</th><th>24×7</th><th>Delivery</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="store-tbody"></tbody>
+          </table></div>
+        </div>
+
+        <!-- ── AMBULANCES ── -->
+        <div class="tab" id="tab-ambulances">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div style="font-size:16px;font-weight:700;color:#1A2B3C">All Ambulance Providers</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="ambu-q" class="form-input" placeholder="🔍 Search..." style="max-width:180px;padding:8px 12px" oninput="renderAmbulances()"/>
+              <select id="ambu-avail" class="form-input" style="max-width:140px;padding:8px 12px" onchange="renderAmbulances()"><option value="">All Status</option><option value="available">Available</option><option value="busy">Busy</option><option value="offline">Offline</option></select>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" style="border-collapse:collapse">
+            <thead><tr><th>#</th><th>Operator</th><th>Vehicle</th><th>Type</th><th>Location</th><th>₹/km</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="ambu-tbody"></tbody>
+          </table></div>
+        </div>
+
+        <!-- ── APPOINTMENTS ── -->
+        <div class="tab" id="tab-appointments">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div style="font-size:16px;font-weight:700;color:#1A2B3C">All Appointments</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="appt-q" class="form-input" placeholder="🔍 Search..." style="max-width:180px;padding:8px 12px" oninput="renderAppointments()"/>
+              <select id="appt-status" class="form-input" style="max-width:130px;padding:8px 12px" onchange="renderAppointments()"><option value="">All</option><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="cancelled">Cancelled</option></select>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" style="border-collapse:collapse">
+            <thead><tr><th>#</th><th>Patient</th><th>Doctor</th><th>Date & Slot</th><th>Type</th><th>Fee</th><th>Payment</th><th>Status</th></tr></thead>
+            <tbody id="appt-tbody"></tbody>
+          </table></div>
+        </div>
+
+        <!-- ── REVIEWS ── -->
+        <div class="tab" id="tab-reviews">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:14px">Review Management</div>
+          <div id="reviews-list"><div class="loading-box"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- ── EARNINGS ── -->
+        <div class="tab" id="tab-earnings">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:16px">💰 Earnings & Revenue</div>
+          <div class="stats-grid" id="earn-stats"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+            <div class="rev-card">
+              <div style="font-size:12px;opacity:.7;margin-bottom:4px">Today's Revenue</div>
+              <div id="rev-today" style="font-family:'Lora',serif;font-size:28px;font-weight:700">₹0</div>
+              <div style="font-size:11px;opacity:.7;margin-top:4px">All channels combined</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#10B981,#059669);border-radius:16px;padding:20px;color:#fff">
+              <div style="font-size:12px;opacity:.7;margin-bottom:4px">This Month</div>
+              <div id="rev-month" style="font-family:'Lora',serif;font-size:28px;font-weight:700">₹0</div>
+              <div style="font-size:11px;opacity:.7;margin-top:4px">Total appointments paid</div>
+            </div>
+          </div>
+          <div class="dcard">
+            <div class="dcard-title">Top Earning Doctors</div>
+            <div id="earn-docs"></div>
+          </div>
+          <div class="dcard">
+            <div class="dcard-title">Revenue by Specialization</div>
+            <div id="earn-spec"></div>
+          </div>
+        </div>
+
+        <!-- ── ANALYTICS ── -->
+        <div class="tab" id="tab-analytics">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:16px">📈 Analytics Dashboard</div>
+          <div class="stats-grid" id="an-stats"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="dcard">
+              <div class="dcard-title">Top Doctors by Bookings</div>
+              <div id="an-top-docs"></div>
+            </div>
+            <div class="dcard">
+              <div class="dcard-title">Popular Specializations</div>
+              <div id="an-top-specs"></div>
+            </div>
+            <div class="dcard">
+              <div class="dcard-title">District-wise Users</div>
+              <div id="an-districts"></div>
+            </div>
+            <div class="dcard">
+              <div class="dcard-title">Booking Trends (Last 7 Days)</div>
+              <div id="an-trends"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── BROADCAST NOTIFICATIONS ── -->
+        <div class="tab" id="tab-broadcast">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:16px">🔔 Broadcast Notifications</div>
+          <div class="dcard" style="margin-bottom:16px">
+            <div class="dcard-title">Send New Notification</div>
+            <div class="form-group">
+              <label class="form-label">Target Audience</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="notif-type-btn active" id="nt-all" onclick="setNT('all')">👥 All Users</button>
+                <button class="notif-type-btn" id="nt-patients" onclick="setNT('patient')">🤒 Patients Only</button>
+                <button class="notif-type-btn" id="nt-doctors" onclick="setNT('doctor')">👨‍⚕️ Doctors Only</button>
+                <button class="notif-type-btn" id="nt-stores" onclick="setNT('store')">💊 Stores Only</button>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Notification Type</label>
+              <select id="bc-type" class="form-input">
+                <option value="info">ℹ️ Info</option>
+                <option value="success">✅ Success</option>
+                <option value="warning">⚠️ Warning</option>
+                <option value="error">❌ Alert</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Title <span>*</span></label><input id="bc-title" class="form-input" placeholder="Notification title..."/></div>
+            <div class="form-group"><label class="form-label">Message <span>*</span></label><textarea id="bc-msg" class="form-input" rows="3" placeholder="Your message here..."></textarea></div>
+            <button class="btn btn-primary btn-full" onclick="sendBroadcast()" style="font-size:14px;padding:12px">🔔 Send Broadcast Notification</button>
+          </div>
+          <div class="dcard">
+            <div class="dcard-title">Recent Broadcasts</div>
+            <div id="broadcast-history"></div>
+          </div>
+        </div>
+
+        <!-- ── KYC VERIFICATION ── -->
+        <div class="tab" id="tab-kyc">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:16px">📄 KYC Verification</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="notif-type-btn active" id="kyc-tab-doc" onclick="setKYCTab('doctors')">👨‍⚕️ Doctors</button>
+            <button class="notif-type-btn" id="kyc-tab-store" onclick="setKYCTab('stores')">💊 Pharmacies</button>
+            <button class="notif-type-btn" id="kyc-tab-ambu" onclick="setKYCTab('ambulances')">🚑 Ambulances</button>
+          </div>
+          <div id="kyc-content"></div>
+        </div>
+
+        <!-- ── ADMIN MANAGEMENT ── -->
+        <div class="tab" id="tab-admins">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:16px">🛡️ Admin Management</div>
+          <div class="dcard" style="margin-bottom:16px">
+            <div class="dcard-title">Create New Admin</div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">Full Name <span>*</span></label><input id="new-admin-name" class="form-input" placeholder="Admin Name"/></div>
+              <div class="form-group"><label class="form-label">Email <span>*</span></label><input id="new-admin-email" type="email" class="form-input" placeholder="admin@docnear.com"/></div>
+              <div class="form-group"><label class="form-label">Password <span>*</span></label><input id="new-admin-pw" type="password" class="form-input" placeholder="Strong password"/></div>
+              <div class="form-group"><label class="form-label">Role</label>
+                <select id="new-admin-role" class="form-input"><option value="admin">Admin</option><option value="moderator">Moderator</option><option value="support">Support</option><option value="superadmin">Super Admin</option></select>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="createAdmin()">+ Create Admin</button>
+          </div>
+          <div class="dcard">
+            <div class="dcard-title">Current Admins</div>
+            <div id="admin-list"></div>
+          </div>
+        </div>
+
+        <!-- ── SUPPORT ── -->
+        <div class="tab" id="tab-support">
+          <div style="font-size:16px;font-weight:700;color:#1A2B3C;margin-bottom:14px">💬 Support Messages</div>
+          <div id="support-list"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════ CONFIG ════════ */
+const SUPA_URL = "https://avonzvocvonvzamedwvh.supabase.co";
+const SUPA_KEY = "sb_publishable_wvfdYDM_JGE8q5NrcYl0EQ_tDOTBL2I";
+const SESSION_KEY = "docnear_admin_v2";
+
+/* ════════ DB ════════ */
+async function dbReq(path, opts={}) {
+  try {
+    const res = await fetch(SUPA_URL+"/rest/v1/"+path, {
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":opts.prefer||"return=representation",...opts.headers},
+      method:opts.method||"GET", body:opts.body?JSON.stringify(opts.body):undefined
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||"Error "+res.status);}
+    const t=await res.text(); return t?JSON.parse(t):[];
+  } catch(err) {
+    if(err.name==="TypeError")throw new Error("Network error — internet check చేయండి");
+    throw err;
+  }
+}
+const DB={
+  get:   (t,q="")  => dbReq(t+"?"+(q?q+"&":"")+"order=created_at.desc"),
+  post:  (t,d)     => dbReq(t,{method:"POST",body:d}),
+  patch: (t,f,d)   => dbReq(t+"?"+f,{method:"PATCH",body:d,prefer:"return=representation"}),
+  del:   (t,f)     => dbReq(t+"?"+f,{method:"DELETE",prefer:"return=minimal"})
+};
+
+/* ════════ HASH ════════ */
+async function hashPwd(p){
+  try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");}
+  catch{return p;}
+}
+
+/* ════════ UTILS ════════ */
+const $=id=>document.getElementById(id);
+const safe=s=>s||"";
+const fmtD=d=>{try{return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch{return d||"—";}};
+const ini=n=>safe(n).split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+function avt(name,color="#0A7FAF",sz=36){return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:${Math.round(sz*.35)}px;flex-shrink:0">${ini(name)}</div>`;}
+function pill(lbl,bg,col){return `<span class="pill" style="background:${bg};color:${col}">${lbl}</span>`;}
+function sPill(s){const m={confirmed:["#D1FAE5","#059669"],pending:["#FEF3C7","#D97706"],cancelled:["#FEE2E2","#DC2626"],completed:["#EDE9FE","#7C4DFF"],available:["#D1FAE5","#059669"],busy:["#FEF3C7","#D97706"],offline:["#F3F4F6","#9CA3AF"],inactive:["#F3F4F6","#9CA3AF"]};const[b,c]=m[s]||m.pending;return pill(s.toUpperCase(),b,c);}
+function toast(msg,err=false){const el=$("toast");if(!el)return;el.style.background=err?"#EF4444":"#10B981";el.style.color="#fff";el.textContent=(err?"❌ ":"✅ ")+msg;el.style.display="block";clearTimeout(el._t);el._t=setTimeout(()=>el.style.display="none",4000);}
+function spin(id,msg="Loading..."){const el=$(id);if(el)el.innerHTML=`<div class="loading-box"><div class="spinner"></div>${msg}</div>`;}
+function sc(icon,label,val,bg="#E3F4FC",vc="#0A7FAF"){return `<div class="stat-card"><div class="stat-icon" style="background:${bg}">${icon}</div><div><div class="stat-val" style="color:${vc}">${val}</div><div class="stat-lbl">${label}</div></div></div>`;}
+function barRow(label,pct,color,val){return `<div class="bar-row"><div class="bar-lbl" title="${label}">${label}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><div class="bar-val">${val}</div></div>`;}
+function grid2(html){return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${html}</div>`;}
+
+/* ════════ SESSION ════════ */
+const SESSION={
+  save:u=>{try{localStorage.setItem(SESSION_KEY,JSON.stringify({...u,at:Date.now()}));}catch{}},
+  load:()=>{try{const d=JSON.parse(localStorage.getItem(SESSION_KEY)||"null");if(!d||Date.now()-d.at>8*3600000){SESSION.clear();return null;}return d;}catch{return null;}},
+  clear:()=>{try{localStorage.removeItem(SESSION_KEY);}catch{}},
+};
+
+/* ════════ STATE ════════ */
+const ADMIN={user:null,data:{docs:[],pats:[],appts:[],stores:[],ambus:[],notifs:[],support:[],reviews:[],admins:[]}};
+let _nt="all", _kycTab="doctors";
+
+/* ════════ AUTH ════════ */
+async function doLogin(){
+  const email=$("l-email").value.trim(), pw=$("l-pw").value;
+  const err=$("l-err"), btn=$("l-btn");
+  err.style.display="none";
+  if(!email||!pw){showErr("Email & password required.");return;}
+  btn.disabled=true;btn.textContent="⏳ Verifying...";
+  try{
+    const hash=await hashPwd(pw);
+    const rows=await DB.get("admins",`email=eq.${encodeURIComponent(email)}&password_hash=eq.${encodeURIComponent(hash)}&is_active=eq.true`);
+    if(!rows.length){showErr("Invalid credentials. Access denied.");return;}
+    ADMIN.user={name:rows[0].name||"Admin",email:rows[0].email,role:rows[0].role||"admin"};
+    SESSION.save(ADMIN.user);
+    initDashboard();
+  }catch(e){showErr(e.message||"Login failed.");}
+  finally{btn.disabled=false;btn.textContent="🔐 Sign In";}
+}
+function showErr(msg){const el=$("l-err");if(el){el.textContent="⚠️ "+msg;el.style.display="block";}}
+function doLogout(){SESSION.clear();ADMIN.user=null;$("dashboard").style.display="none";$("login-screen").style.display="flex";$("l-pw").value="";toast("Logged out securely.");}
+
+function checkSession(){
+  const s=SESSION.load();
+  if(!s)return;
+  ADMIN.user=s;
+  initDashboard();
+}
+function initDashboard(){
+  $("login-screen").style.display="none";
+  $("dashboard").style.display="block";
+  $("sb-name").textContent=ADMIN.user.name;
+  $("sb-role").textContent="🛡️ "+ADMIN.user.role.toUpperCase();
+  $("sb-avatar").textContent=ini(ADMIN.user.name);
+  setInterval(updateClock,1000);updateClock();
+  loadAllData();
+}
+function updateClock(){const el=$("topbar-time");if(el)el.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}
+
+/* ════════ DATA ════════ */
+async function loadAllData(){
+  spin("ov-stats");
+  try{
+    const[docs,pats,appts]=await Promise.all([DB.get("doctors"),DB.get("patients"),DB.get("appointments")]);
+    ADMIN.data.docs=docs; ADMIN.data.pats=pats; ADMIN.data.appts=appts;
+    try{ADMIN.data.stores=await DB.get("medical_stores");}catch{ADMIN.data.stores=[];}
+    try{ADMIN.data.ambus=await DB.get("ambulances");}catch{ADMIN.data.ambus=[];}
+    try{ADMIN.data.support=await DB.get("support_messages");}catch{ADMIN.data.support=[];}
+    try{ADMIN.data.notifs=await DB.get("notifications","limit=100");}catch{ADMIN.data.notifs=[];}
+    try{ADMIN.data.reviews=await DB.get("doctor_reviews");}catch{ADMIN.data.reviews=[];}
+    try{ADMIN.data.admins=await DB.get("admins");}catch{ADMIN.data.admins=[];}
+    updateBadges();
+    renderAll();
+  }catch(e){
+    $("ov-stats").innerHTML=`<div style="grid-column:1/-1;background:#FEE2E2;border-radius:12px;padding:16px;color:#DC2626">❌ ${e.message}<br><small>Run DOCNEAR_FINAL.sql + DOCNEAR_V2.sql in Supabase SQL Editor</small></div>`;
+    toast(e.message,true);
+  }
+}
+async function refreshAll(){toast("Refreshing...");await loadAllData();toast("Refreshed! ✅");}
+function renderAll(){renderOverview();renderPending();renderStoreApprovals();renderAmbuApprovals();renderDoctors();renderPatients();renderStores();renderAmbulances();renderAppointments();renderReviews();renderEarnings();renderAnalytics();renderBroadcastHistory();renderKYC();renderAdmins();renderSupport();}
+
+function updateBadges(){
+  const{docs,stores,ambus,appts}=ADMIN.data;
+  const pdoc=docs.filter(d=>!d.approved);
+  const pstore=stores.filter(s=>!s.approved);
+  const pambu=ambus.filter(a=>!a.approved);
+  const setB=(id,n,cls)=>{const b=$(id);if(!b)return;b.textContent=n;b.style.display=n?"inline-flex":"none";if(cls)b.className="sb-bdg "+cls;};
+  setB("bdg-pending",pdoc.length,"red");
+  setB("bdg-stores",pstore.length,"red");
+  setB("bdg-ambu",pambu.length,"red");
+  setB("bdg-docs",docs.filter(d=>d.approved).length,"grn");
+  setB("bdg-pats",ADMIN.data.pats.length,"grn");
+  setB("bdg-appts",appts.length,"grn");
+  setB("bdg-kyc",pdoc.length+pstore.length+pambu.length,"org");
+}
+
+/* ════════ NAVIGATION ════════ */
+function showTab(name){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".sb-item").forEach(i=>i.classList.remove("active"));
+  $("tab-"+name)?.classList.add("active");
+  $("nav-"+name)?.classList.add("active");
+  const ttl={overview:"Overview",pending:"Doctor Approvals","store-approvals":"Store Approvals","ambu-approvals":"Ambulance Approvals",doctors:"All Doctors",patients:"All Patients",stores:"Medical Stores",ambulances:"Ambulances",appointments:"Appointments",reviews:"Review Management",earnings:"Earnings & Revenue",analytics:"Analytics",broadcast:"Broadcast Notifications",kyc:"KYC Verification",admins:"Admin Management",support:"Support Messages"};
+  $("pg-title").textContent=ttl[name]||name;
+  closeSB();
+}
+function openSB(){$("sidebar").classList.add("open");$("overlay").classList.add("show");}
+function closeSB(){$("sidebar").classList.remove("open");$("overlay").classList.remove("show");}
+
+/* ════════ OVERVIEW ════════ */
+function renderOverview(){
+  const{docs,pats,appts,stores,ambus}=ADMIN.data;
+  const paid=appts.filter(a=>a.payment_status==="paid");
+  const rev=paid.reduce((s,a)=>s+a.fee,0);
+  $("ov-stats").innerHTML=
+    sc("👨‍⚕️","Doctors",docs.length)+sc("✅","Approved Docs",docs.filter(d=>d.approved).length,"#D1FAE5","#059669")+
+    sc("⏳","Pending Docs",docs.filter(d=>!d.approved).length,"#FEF3C7","#D97706")+
+    sc("🤒","Patients",pats.length,"#EDE9FE","#7C4DFF")+
+    sc("📅","Appointments",appts.length,"#FEE9E1","#FF6B35")+
+    sc("💰","Revenue","₹"+rev.toLocaleString(),"#F0FDF4","#059669")+
+    sc("💊","Med Stores",stores.length,"#D1FAE5","#10B981")+
+    sc("🚑","Ambulances",ambus.length,"#FEE2E2","#EF4444");
+  $("ov-appts").innerHTML=appts.slice(0,5).map(a=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3F4F6">
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#1A2B3C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${safe(a.patient_name)} → ${safe(a.doctor_name)}</div>
+      <div style="font-size:11px;color:#9CA3AF">${a.date} · ${a.slot}</div></div>
+      ${sPill(a.status)}
+    </div>`).join("")||"<div class='text-muted'>No appointments.</div>";
+  $("ov-docs").innerHTML=docs.slice(0,5).map(d=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3F4F6">
+      ${avt(d.name,d.color||"#0A7FAF",30)}
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#1A2B3C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${safe(d.name)}</div>
+      <div style="font-size:11px;color:#9CA3AF">${safe(d.specialization)}</div></div>
+      ${pill(d.approved?"✓":"⏳",d.approved?"#D1FAE5":"#FEF3C7",d.approved?"#059669":"#D97706")}
+    </div>`).join("")||"<div class='text-muted'>No doctors.</div>";
+  const specC={};docs.filter(d=>d.approved).forEach(d=>{const s=safe(d.specialization)||"Other";specC[s]=(specC[s]||0)+1;});
+  const maxV=Math.max(...Object.values(specC),1);
+  const clrs={"Cardiology":"#FF4757","Neurology":"#7C4DFF","Orthopedics":"#FF6B35","Pediatrics":"#00BCD4","Ophthalmology":"#2196F3","Dermatology":"#E91E8C","General Medicine":"#009688","Gynecology":"#E91E63"};
+  $("ov-spec").innerHTML=Object.entries(specC).sort((a,b)=>b[1]-a[1]).map(([sp,n])=>barRow(sp,Math.round(n/maxV*100),clrs[sp]||"#0A7FAF",n)).join("")||"<div class='text-muted'>No data.</div>";
+}
+
+/* ════════ PENDING APPROVALS (DOCTORS) ════════ */
+function renderPending(){
+  const pending=ADMIN.data.docs.filter(d=>!d.approved);
+  const c=$("pending-list");
+  if(!c)return;
+  if(!pending.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🎉</div><div class="empty-msg">No pending doctor approvals!</div></div>`;return;}
+  c.innerHTML=`<div class="alert alert-warn" style="margin-bottom:16px">🔔 <strong>${pending.length} doctor registration${pending.length>1?"s":""}</strong> waiting for review.</div>`+
+    pending.map(d=>pendingDocCard(d)).join("");
+}
+function pendingDocCard(d){
+  return `<div class="dcard" id="pc-${d.id}" style="border:2px solid #FDE68A">
+    <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-start">
+      ${avt(d.name,d.color||"#0A7FAF",52)}
+      <div style="flex:1;min-width:140px">
+        <div style="font-size:16px;font-weight:800;color:#1A2B3C;margin-bottom:2px">${safe(d.name)}</div>
+        <div style="font-size:13px;color:#0A7FAF;font-weight:700;margin-bottom:6px">${safe(d.specialization)}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${pill("⏳ Pending","#FEF3C7","#D97706")}
+          ${d.qualifications?pill(safe(d.qualifications).split(",")[0].trim(),"#EDE9FE","#7C4DFF"):""}
+          ${d.experience?pill(d.experience+"y exp","#E3F4FC","#0A7FAF"):""}
+        </div>
+      </div>
+      <div style="font-size:17px;font-weight:800;color:#0A7FAF;flex-shrink:0">₹${d.fee||0}</div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-lbl">📋 Reg. Number</div><div class="info-val">${safe(d.reg_number)||"—"}</div></div>
+      <div class="info-item"><div class="info-lbl">🏥 Hospital</div><div class="info-val">${safe(d.hospital)||"—"}</div></div>
+      <div class="info-item"><div class="info-lbl">📍 District</div><div class="info-val">${safe(d.district||d.city||d.location)||"—"}</div></div>
+      <div class="info-item"><div class="info-lbl">📞 Phone</div><div class="info-val">${safe(d.phone)||"—"}</div></div>
+      <div class="info-item"><div class="info-lbl">📧 Email</div><div class="info-val" style="word-break:break-all">${safe(d.email)||"—"}</div></div>
+      <div class="info-item"><div class="info-lbl">💼 Experience</div><div class="info-val">${d.experience||0} years</div></div>
+    </div>
+    ${d.about?`<div style="background:#F9FAFB;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#374151;line-height:1.6">${safe(d.about)}</div>`:""}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button id="rbtn-${d.id}" class="btn btn-red btn-full" onclick="rejectDoc('${d.id}')">❌ Reject</button>
+      <button id="abtn-${d.id}" class="btn btn-green btn-full" onclick="approveDoc('${d.id}')">✅ Approve Doctor</button>
+    </div>
+  </div>`;
+}
+async function approveDoc(id){
+  const btn=$("abtn-"+id); if(btn){btn.disabled=true;btn.textContent="⏳...";}
+  try{
+    const ml="https://meet.jit.si/docnear-"+crypto.randomUUID().slice(0,10);
+    await DB.patch("doctors","id=eq."+id,{approved:true,meeting_link:ml});
+    await DB.post("notifications",{user_id:id,user_type:"doctor",title:"Profile Approved! ✅",message:"మీ profile approve అయింది. Patients book చేయవచ్చు.",type:"success"}).catch(()=>{});
+    ADMIN.data.docs=ADMIN.data.docs.map(d=>d.id===id?{...d,approved:true}:d);
+    toast("Doctor approved! ✅"); updateBadges(); renderPending(); renderDoctors(); renderOverview();
+  }catch(e){toast("Error: "+e.message,true);if(btn){btn.disabled=false;btn.textContent="✅ Approve Doctor";}}
+}
+async function rejectDoc(id){
+  const d=ADMIN.data.docs.find(x=>x.id===id);
+  const reason=prompt("Rejection reason for "+safe(d?.name)+"?");
+  if(reason===null)return;
+  const btn=$("rbtn-"+id); if(btn){btn.disabled=true;btn.textContent="⏳...";}
+  try{
+    if(reason.trim())await DB.patch("doctors","id=eq."+id,{rejection_reason:reason.trim()});
+    await DB.del("appointments","doctor_id=eq."+id).catch(()=>{});
+    await DB.del("doctors","id=eq."+id);
+    ADMIN.data.docs=ADMIN.data.docs.filter(x=>x.id!==id);
+    toast("Doctor rejected."); updateBadges(); renderPending(); renderDoctors(); renderOverview();
+  }catch(e){toast("Error: "+e.message,true);if(btn){btn.disabled=false;btn.textContent="❌ Reject";}}
+}
+
+/* ════════ STORE APPROVALS ════════ */
+function renderStoreApprovals(){
+  const pending=ADMIN.data.stores.filter(s=>!s.approved);
+  const c=$("store-approvals-list"); if(!c)return;
+  if(!pending.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🎉</div><div class="empty-msg">No pending store approvals!</div></div>`;return;}
+  c.innerHTML=`<div class="alert alert-warn" style="margin-bottom:16px">🔔 <strong>${pending.length} medical store${pending.length>1?"s":""}</strong> waiting for approval.</div>`+
+    pending.map(s=>`
+    <div class="dcard" id="spc-${s.id}" style="border:2px solid #FDE68A">
+      <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-start">
+        <div style="width:52px;height:52px;border-radius:14px;background:${s.color||"#10B981"};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💊</div>
+        <div style="flex:1;min-width:140px">
+          <div style="font-size:16px;font-weight:800;color:#1A2B3C;margin-bottom:2px">${safe(s.store_name)}</div>
+          <div style="font-size:13px;color:#10B981;font-weight:700;margin-bottom:6px">Medical Store / Pharmacy</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${pill("⏳ Pending","#FEF3C7","#D97706")}
+            ${s.is_24x7?pill("24×7","#EDE9FE","#7C4DFF"):""}
+            ${s.delivery_available?pill("Delivery","#D1FAE5","#059669"):""}
+          </div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-lbl">👤 Owner</div><div class="info-val">${safe(s.owner_name)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">📞 Phone</div><div class="info-val">${safe(s.phone)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">📧 Email</div><div class="info-val" style="word-break:break-all">${safe(s.email)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">📍 Location</div><div class="info-val">${safe(s.district||s.address)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">💊 Drug License</div><div class="info-val">${safe(s.drug_license_no)||"Not Uploaded"}</div></div>
+        <div class="info-item"><div class="info-lbl">🧾 GST No.</div><div class="info-val">${safe(s.gst_number)||"Not Uploaded"}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-red btn-full" onclick="rejectEntity('stores','${s.id}')">❌ Reject Store</button>
+        <button class="btn btn-green btn-full" onclick="approveEntity('stores','${s.id}')">✅ Approve Store</button>
+      </div>
+    </div>`).join("");
+}
+
+/* ════════ AMBULANCE APPROVALS ════════ */
+function renderAmbuApprovals(){
+  const pending=ADMIN.data.ambus.filter(a=>!a.approved);
+  const c=$("ambu-approvals-list"); if(!c)return;
+  if(!pending.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🎉</div><div class="empty-msg">No pending ambulance approvals!</div></div>`;return;}
+  c.innerHTML=`<div class="alert alert-warn" style="margin-bottom:16px">🔔 <strong>${pending.length} ambulance provider${pending.length>1?"s":""}</strong> waiting for approval.</div>`+
+    pending.map(a=>`
+    <div class="dcard" id="apc-${a.id}" style="border:2px solid #FDE68A">
+      <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-start">
+        <div style="width:52px;height:52px;border-radius:14px;background:${a.color||"#EF4444"};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🚑</div>
+        <div style="flex:1;min-width:140px">
+          <div style="font-size:16px;font-weight:800;color:#1A2B3C;margin-bottom:2px">${safe(a.operator_name)}</div>
+          <div style="font-size:13px;color:#EF4444;font-weight:700;margin-bottom:6px">${safe(a.vehicle_type)||"Ambulance"}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${pill("⏳ Pending","#FEF3C7","#D97706")}
+            ${a.has_oxygen?pill("O2","#D1FAE5","#059669"):""}
+            ${a.has_monitor?pill("Monitor","#EDE9FE","#7C4DFF"):""}
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:11px;color:#9CA3AF">Base Fare</div>
+          <div style="font-size:16px;font-weight:800;color:#EF4444">₹${a.base_fare||0}</div>
+          <div style="font-size:11px;color:#9CA3AF">+₹${a.per_km_rate||0}/km</div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-lbl">📞 Phone</div><div class="info-val">${safe(a.phone)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">📧 Email</div><div class="info-val" style="word-break:break-all">${safe(a.email)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">🚗 Vehicle No.</div><div class="info-val">${safe(a.vehicle_number)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">📍 Base Location</div><div class="info-val">${safe(a.base_location||a.district)||"—"}</div></div>
+        <div class="info-item"><div class="info-lbl">📐 Service Radius</div><div class="info-val">${a.service_radius_km||0} km</div></div>
+        <div class="info-item"><div class="info-lbl">🌙 Night Charge</div><div class="info-val">+₹${a.night_charge_extra||0}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-red btn-full" onclick="rejectEntity('ambulances','${a.id}')">❌ Reject</button>
+        <button class="btn btn-green btn-full" onclick="approveEntity('ambulances','${a.id}')">✅ Approve Ambulance</button>
+      </div>
+    </div>`).join("");
+}
+
+async function approveEntity(table,id){
+  try{
+    await DB.patch(table,"id=eq."+id,{approved:true});
+    if(table==="ambulances")await DB.patch(table,"id=eq."+id,{availability_status:"available"});
+    ADMIN.data[table==="medical_stores"?"stores":"ambus"]=ADMIN.data[table==="medical_stores"?"stores":"ambus"].map(x=>x.id===id?{...x,approved:true}:x);
+    toast("Approved! ✅"); updateBadges();
+    if(table==="medical_stores"){renderStoreApprovals();renderStores();}
+    else{renderAmbuApprovals();renderAmbulances();}
+    renderOverview();
+  }catch(e){toast("Error: "+e.message,true);}
+}
+async function rejectEntity(table,id){
+  const reason=prompt("Rejection reason? (Optional)");
+  if(reason===null)return;
+  try{
+    if(reason.trim())await DB.patch(table,"id=eq."+id,{rejection_reason:reason});
+    await DB.del(table,"id=eq."+id);
+    if(table==="medical_stores")ADMIN.data.stores=ADMIN.data.stores.filter(x=>x.id!==id);
+    else ADMIN.data.ambus=ADMIN.data.ambus.filter(x=>x.id!==id);
+    toast("Rejected and removed."); updateBadges();
+    if(table==="medical_stores"){renderStoreApprovals();renderStores();}
+    else{renderAmbuApprovals();renderAmbulances();}
+  }catch(e){toast("Error: "+e.message,true);}
+}
+
+/* ════════ DOCTORS TABLE ════════ */
+function renderDoctors(){
+  const q=safe(($("doc-q")||{}).value).toLowerCase(), st=safe(($("doc-status")||{}).value);
+  const rows=ADMIN.data.docs.filter(d=>{
+    const mQ=!q||safe(d.name).toLowerCase().includes(q)||safe(d.specialization).toLowerCase().includes(q)||safe(d.hospital).toLowerCase().includes(q);
+    return mQ&&(!st||String(d.approved)===st);
+  });
+  const tb=$("doc-tbody"); if(!tb)return;
+  tb.innerHTML=rows.map((d,i)=>`<tr>
+    <td style="color:#9CA3AF;font-size:12px">${i+1}</td>
+    <td><div style="display:flex;align-items:center;gap:8px">${avt(d.name,d.color||"#0A7FAF")}<div><div style="font-weight:600">${safe(d.name)}</div><div style="font-size:11px;color:#9CA3AF">${safe(d.email)}</div></div></div></td>
+    <td>${safe(d.specialization)||"—"}</td>
+    <td><div style="font-size:12px">${safe(d.hospital)||"—"}</div><div style="font-size:11px;color:#9CA3AF">${safe(d.district||d.city||d.location)||"—"}</div></td>
+    <td style="font-weight:700;color:#0A7FAF">₹${d.fee||0}</td>
+    <td>${pill(d.approved?"✓ Approved":"⏳ Pending",d.approved?"#D1FAE5":"#FEF3C7",d.approved?"#059669":"#D97706")}</td>
+    <td><div style="display:flex;gap:5px;flex-wrap:wrap">
+      ${!d.approved?`<button class="btn btn-green btn-sm" onclick="approveDoc('${d.id}')">✅</button>`:""}
+      <button class="btn btn-ghost btn-sm" onclick="deactivateDoc('${d.id}')" title="Deactivate">🚫</button>
+    </div></td>
+  </tr>`).join("")||`<tr><td colspan="7" style="text-align:center;padding:20px;color:#9CA3AF">No doctors found.</td></tr>`;
+}
+async function deactivateDoc(id){
+  if(!confirm("Deactivate this doctor? They won't appear in search."))return;
+  try{await DB.patch("doctors","id=eq."+id,{approved:false});ADMIN.data.docs=ADMIN.data.docs.map(d=>d.id===id?{...d,approved:false}:d);toast("Deactivated.");renderDoctors();renderOverview();updateBadges();}
+  catch(e){toast(e.message,true);}
+}
+
+/* ════════ PATIENTS TABLE ════════ */
+function renderPatients(){
+  const q=safe(($("pat-q")||{}).value).toLowerCase();
+  const rows=ADMIN.data.pats.filter(p=>!q||safe(p.name).toLowerCase().includes(q)||safe(p.email).toLowerCase().includes(q)||safe(p.phone).includes(q));
+  const tb=$("pat-tbody"); if(!tb)return;
+  tb.innerHTML=rows.map((p,i)=>`<tr>
+    <td style="color:#9CA3AF;font-size:12px">${i+1}</td>
+    <td><div style="display:flex;align-items:center;gap:8px">${avt(p.name,"#0A7FAF")}<div><div style="font-weight:600">${safe(p.name)}</div><div style="font-size:11px;color:#9CA3AF">${fmtD(p.created_at)}</div></div></div></td>
+    <td><div>${safe(p.email)}</div><div style="font-size:11px;color:#9CA3AF">${safe(p.phone)||"—"}</div></td>
+    <td>${p.age||"—"} / ${safe(p.gender)||"—"}</td>
+    <td>${safe(p.blood_group)||"—"}</td>
+    <td style="font-size:14px;font-weight:700;color:#0A7FAF">${ADMIN.data.appts.filter(a=>a.patient_id===p.id).length}</td>
+  </tr>`).join("")||`<tr><td colspan="6" style="text-align:center;padding:20px;color:#9CA3AF">No patients found.</td></tr>`;
+}
+
+/* ════════ STORES TABLE ════════ */
+function renderStores(){
+  const q=safe(($("store-q")||{}).value).toLowerCase(), st=safe(($("store-status")||{}).value);
+  const rows=ADMIN.data.stores.filter(s=>{
+    const mQ=!q||safe(s.store_name).toLowerCase().includes(q)||safe(s.district).toLowerCase().includes(q);
+    return mQ&&(!st||String(s.approved)===st);
+  });
+  const tb=$("store-tbody"); if(!tb)return;
+  tb.innerHTML=rows.map((s,i)=>`<tr>
+    <td style="color:#9CA3AF;font-size:12px">${i+1}</td>
+    <td><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:8px;background:${s.color||"#10B981"};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💊</div><div><div style="font-weight:600">${safe(s.store_name)}</div><div style="font-size:11px;color:#9CA3AF">${safe(s.email)}</div></div></div></td>
+    <td><div>${safe(s.owner_name)||"—"}</div><div style="font-size:11px;color:#9CA3AF">${safe(s.phone)||"—"}</div></td>
+    <td><div style="font-size:12px">${safe(s.district||s.address)||"—"}</div></td>
+    <td>${s.is_24x7?pill("24×7","#EDE9FE","#7C4DFF"):pill("Limited","#F3F4F6","#9CA3AF")}</td>
+    <td>${s.delivery_available?pill("✓ Delivery","#D1FAE5","#059669"):pill("No","#F3F4F6","#9CA3AF")}</td>
+    <td>${pill(s.approved?"✓ Approved":"⏳ Pending",s.approved?"#D1FAE5":"#FEF3C7",s.approved?"#059669":"#D97706")}</td>
+    <td><div style="display:flex;gap:5px">
+      ${!s.approved?`<button class="btn btn-green btn-sm" onclick="approveEntity('medical_stores','${s.id}')">✅</button>`:""}
+      <button class="btn btn-red btn-sm" onclick="rejectEntity('medical_stores','${s.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join("")||`<tr><td colspan="8" style="text-align:center;padding:20px;color:#9CA3AF">No stores found.</td></tr>`;
+}
+
+/* ════════ AMBULANCES TABLE ════════ */
+function renderAmbulances(){
+  const q=safe(($("ambu-q")||{}).value).toLowerCase(), av=safe(($("ambu-avail")||{}).value);
+  const rows=ADMIN.data.ambus.filter(a=>{
+    const mQ=!q||safe(a.operator_name).toLowerCase().includes(q)||safe(a.vehicle_number).toLowerCase().includes(q);
+    return mQ&&(!av||a.availability_status===av);
+  });
+  const tb=$("ambu-tbody"); if(!tb)return;
+  tb.innerHTML=rows.map((a,i)=>`<tr>
+    <td style="color:#9CA3AF;font-size:12px">${i+1}</td>
+    <td><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:8px;background:${a.color||"#EF4444"};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🚑</div><div><div style="font-weight:600">${safe(a.operator_name)}</div><div style="font-size:11px;color:#9CA3AF">${safe(a.phone)||"—"}</div></div></div></td>
+    <td><div style="font-size:12px;font-weight:600">${safe(a.vehicle_number)||"—"}</div></td>
+    <td>${safe(a.vehicle_type)||"—"}</td>
+    <td>${safe(a.base_location||a.district)||"—"}</td>
+    <td style="font-weight:700;color:#EF4444">₹${a.per_km_rate||0}</td>
+    <td>${sPill(a.availability_status||"offline")}</td>
+    <td><div style="display:flex;gap:5px">
+      ${!a.approved?`<button class="btn btn-green btn-sm" onclick="approveEntity('ambulances','${a.id}')">✅</button>`:""}
+      <button class="btn btn-red btn-sm" onclick="rejectEntity('ambulances','${a.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join("")||`<tr><td colspan="8" style="text-align:center;padding:20px;color:#9CA3AF">No ambulances found.</td></tr>`;
+}
+
+/* ════════ APPOINTMENTS ════════ */
+function renderAppointments(){
+  const q=safe(($("appt-q")||{}).value).toLowerCase(), st=safe(($("appt-status")||{}).value);
+  const rows=ADMIN.data.appts.filter(a=>{
+    const mQ=!q||safe(a.patient_name).toLowerCase().includes(q)||safe(a.doctor_name).toLowerCase().includes(q);
+    return mQ&&(!st||a.status===st);
+  });
+  const tb=$("appt-tbody"); if(!tb)return;
+  tb.innerHTML=rows.map((a,i)=>`<tr>
+    <td style="color:#9CA3AF;font-size:12px">${i+1}</td>
+    <td style="font-size:12px;font-weight:600">${safe(a.patient_name)||"—"}</td>
+    <td><div style="font-size:12px;color:#0A7FAF;font-weight:600">${safe(a.doctor_name)||"—"}</div><div style="font-size:11px;color:#9CA3AF">${safe(a.specialization)||""}</div></td>
+    <td><div style="font-size:12px;font-weight:600">${a.date||"—"}</div><div style="font-size:11px;color:#9CA3AF">${a.slot||""}</div></td>
+    <td>${a.is_video?pill("🎥 Video","#EDE9FE","#7C4DFF"):pill("🏥 In-Person","#E3F4FC","#0A7FAF")}</td>
+    <td style="font-weight:700;color:#0A7FAF">₹${a.fee||0}</td>
+    <td>${pill(a.payment_status==="paid"?"💳 Paid":"⏳ Pending",a.payment_status==="paid"?"#D1FAE5":"#FEF3C7",a.payment_status==="paid"?"#059669":"#D97706")}</td>
+    <td>${sPill(a.status)}</td>
+  </tr>`).join("")||`<tr><td colspan="8" style="text-align:center;padding:20px;color:#9CA3AF">No appointments found.</td></tr>`;
+}
+
+/* ════════ REVIEWS ════════ */
+function renderReviews(){
+  const c=$("reviews-list"); if(!c)return;
+  const rev=ADMIN.data.reviews;
+  if(!rev.length){c.innerHTML=`<div class="empty"><div class="empty-icon">⭐</div><div class="empty-msg">No reviews yet.</div></div>`;return;}
+  c.innerHTML=`<div class="tbl-wrap"><table class="tbl" style="border-collapse:collapse"><thead><tr><th>#</th><th>Doctor</th><th>Patient</th><th>Rating</th><th>Comment</th><th>Date</th><th>Action</th></tr></thead><tbody>`+
+    rev.map((r,i)=>{
+      const doc=ADMIN.data.docs.find(d=>d.id===r.doctor_id);
+      return `<tr>
+        <td style="color:#9CA3AF;font-size:12px">${i+1}</td>
+        <td style="font-size:12px;font-weight:600">${safe(doc?.name||"Unknown Doctor")}</td>
+        <td style="font-size:12px">${safe(r.patient_name)||"—"}</td>
+        <td>${[1,2,3,4,5].map(s=>`<span style="color:${s<=r.rating?"#F59E0B":"#E5E7EB"};font-size:14px">★</span>`).join("")}</td>
+        <td style="font-size:12px;color:#374151;max-width:200px">${safe(r.comment)||"—"}</td>
+        <td style="font-size:11px;color:#9CA3AF">${fmtD(r.created_at)}</td>
+        <td><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">🗑️ Remove</button></td>
+      </tr>`;
+    }).join("")+`</tbody></table></div>`;
+}
+async function deleteReview(id){
+  if(!confirm("Delete this review permanently?"))return;
+  try{
+    await DB.del("doctor_reviews","id=eq."+id);
+    ADMIN.data.reviews=ADMIN.data.reviews.filter(r=>r.id!==id);
+    toast("Review deleted."); renderReviews();
+  }catch(e){toast(e.message,true);}
+}
+
+/* ════════ EARNINGS ════════ */
+function renderEarnings(){
+  const{appts,docs}=ADMIN.data;
+  const paid=appts.filter(a=>a.payment_status==="paid");
+  const totalRev=paid.reduce((s,a)=>s+a.fee,0);
+  const todayStr=new Date().toISOString().split("T")[0];
+  const todayRev=paid.filter(a=>a.date===todayStr).reduce((s,a)=>s+a.fee,0);
+  const monthStr=new Date().toISOString().slice(0,7);
+  const monthRev=paid.filter(a=>a.date?.startsWith(monthStr)).reduce((s,a)=>s+a.fee,0);
+  if($("earn-stats"))$("earn-stats").innerHTML=
+    sc("💰","Total Revenue","₹"+totalRev.toLocaleString(),"#F0FDF4","#059669")+
+    sc("📅","Today","₹"+todayRev.toLocaleString(),"#FEE9E1","#FF6B35")+
+    sc("📆","This Month","₹"+monthRev.toLocaleString(),"#EDE9FE","#7C4DFF")+
+    sc("✅","Paid Appointments",paid.length,"#D1FAE5","#059669");
+  if($("rev-today"))$("rev-today").textContent="₹"+todayRev.toLocaleString();
+  if($("rev-month"))$("rev-month").textContent="₹"+monthRev.toLocaleString();
+  // Top earning doctors
+  const docEarn={};
+  paid.forEach(a=>{docEarn[a.doctor_id]=(docEarn[a.doctor_id]||0)+a.fee;});
+  const topDocs=Object.entries(docEarn).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxE=Math.max(...topDocs.map(x=>x[1]),1);
+  if($("earn-docs"))$("earn-docs").innerHTML=topDocs.map(([did,earn])=>{
+    const doc=docs.find(d=>d.id===did);
+    return barRow(safe(doc?.name)||"Unknown",""+Math.round(earn/maxE*100),"#059669","₹"+earn.toLocaleString());
+  }).join("")||"<div class='text-muted'>No earnings data.</div>";
+  // By specialization
+  const specRev={};
+  paid.forEach(a=>{const sp=safe(a.specialization)||"Other";specRev[sp]=(specRev[sp]||0)+a.fee;});
+  const topSpec=Object.entries(specRev).sort((a,b)=>b[1]-a[1]);
+  const maxSR=Math.max(...topSpec.map(x=>x[1]),1);
+  const clrs={"Cardiology":"#FF4757","Neurology":"#7C4DFF","Orthopedics":"#FF6B35","Pediatrics":"#00BCD4","Ophthalmology":"#2196F3","Dermatology":"#E91E8C","General Medicine":"#009688"};
+  if($("earn-spec"))$("earn-spec").innerHTML=topSpec.map(([sp,r])=>barRow(sp,""+Math.round(r/maxSR*100),clrs[sp]||"#0A7FAF","₹"+r.toLocaleString())).join("")||"<div class='text-muted'>No data.</div>";
+}
+
+/* ════════ ANALYTICS ════════ */
+function renderAnalytics(){
+  const{docs,pats,appts}=ADMIN.data;
+  if($("an-stats"))$("an-stats").innerHTML=
+    sc("👥","Total Users",docs.length+pats.length)+
+    sc("📅","Total Bookings",appts.length,"#FEE9E1","#FF6B35")+
+    sc("🎥","Video Consults",appts.filter(a=>a.is_video).length,"#EDE9FE","#7C4DFF")+
+    sc("⭐","Avg Rating",(docs.filter(d=>d.rating>0).reduce((s,d)=>s+d.rating,0)/(docs.filter(d=>d.rating>0).length||1)).toFixed(1),"#FEF3C7","#D97706");
+  // Top doctors by bookings
+  const docBook={};appts.forEach(a=>{docBook[a.doctor_id]=(docBook[a.doctor_id]||0)+1;});
+  const topD=Object.entries(docBook).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxD=Math.max(...topD.map(x=>x[1]),1);
+  if($("an-top-docs"))$("an-top-docs").innerHTML=topD.map(([did,n])=>{const d=docs.find(x=>x.id===did);return barRow(safe(d?.name)||"Unknown",""+Math.round(n/maxD*100),"#0A7FAF",""+n);}).join("")||"<div class='text-muted'>No data.</div>";
+  // Popular specializations
+  const specB={};appts.forEach(a=>{const s=safe(a.specialization)||"Other";specB[s]=(specB[s]||0)+1;});
+  const topS=Object.entries(specB).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxS=Math.max(...topS.map(x=>x[1]),1);
+  const clrs={"Cardiology":"#FF4757","Neurology":"#7C4DFF","Orthopedics":"#FF6B35","Pediatrics":"#00BCD4","General Medicine":"#009688"};
+  if($("an-top-specs"))$("an-top-specs").innerHTML=topS.map(([s,n])=>barRow(s,""+Math.round(n/maxS*100),clrs[s]||"#0A7FAF",""+n)).join("")||"<div class='text-muted'>No data.</div>";
+  // District-wise
+  const distU={};
+  [...docs,...pats].forEach(u=>{const d=safe(u.district||u.city||u.location)||"Unknown";distU[d]=(distU[d]||0)+1;});
+  const topDist=Object.entries(distU).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxDist=Math.max(...topDist.map(x=>x[1]),1);
+  if($("an-districts"))$("an-districts").innerHTML=topDist.map(([d,n])=>barRow(d,""+Math.round(n/maxDist*100),"#7C4DFF",""+n)).join("")||"<div class='text-muted'>No location data.</div>";
+  // Booking trends (last 7 days)
+  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split("T")[0]);}
+  const dayB={};days.forEach(d=>{dayB[d]=appts.filter(a=>a.date===d).length;});
+  const maxTr=Math.max(...Object.values(dayB),1);
+  if($("an-trends"))$("an-trends").innerHTML=days.map(d=>barRow(d.slice(5),""+Math.round(dayB[d]/maxTr*100),"#FF6B35",""+dayB[d])).join("");
+}
+
+/* ════════ BROADCAST ════════ */
+function setNT(t){
+  _nt=t;
+  ["all","patients","doctors","stores"].forEach(x=>{const b=$("nt-"+x);if(b)b.classList.toggle("active",x===t);});
+}
+async function sendBroadcast(){
+  const title=($("bc-title")||{}).value?.trim();
+  const msg=($("bc-msg")||{}).value?.trim();
+  const type=($("bc-type")||{}).value||"info";
+  if(!title||!msg){toast("Title & message required.",true);return;}
+  try{
+    let targets=[];
+    if(_nt==="all"||_nt==="patient") targets=[...targets,...ADMIN.data.pats.map(p=>({id:p.id,type:"patient"}))];
+    if(_nt==="all"||_nt==="doctor")  targets=[...targets,...ADMIN.data.docs.map(d=>({id:d.id,type:"doctor"}))];
+    if(!targets.length){toast("No users to send to.",true);return;}
+    // Send to first 20 to avoid too many requests
+    const batch=targets.slice(0,20);
+    await Promise.all(batch.map(u=>DB.post("notifications",{user_id:u.id,user_type:u.type,title,message:msg,type}).catch(()=>{})));
+    toast(`Broadcast sent to ${batch.length} users! 🔔`);
+    if($("bc-title"))$("bc-title").value=""; if($("bc-msg"))$("bc-msg").value="";
+    renderBroadcastHistory();
+  }catch(e){toast("Error: "+e.message,true);}
+}
+function renderBroadcastHistory(){
+  const c=$("broadcast-history"); if(!c)return;
+  const recent=ADMIN.data.notifs.slice(0,10);
+  if(!recent.length){c.innerHTML="<div class='text-muted'>No notifications sent yet.</div>";return;}
+  const tc={success:"#10B981",info:"#0A7FAF",warning:"#F59E0B",error:"#EF4444"};
+  c.innerHTML=`<div style="display:grid;gap:8px">`+recent.map(n=>`
+    <div style="background:#F9FAFB;border-radius:10px;padding:10px 14px;border-left:3px solid ${tc[n.type]||"#0A7FAF"}">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px">
+        <div style="font-size:13px;font-weight:700;color:#1A2B3C">${safe(n.title)}</div>
+        <div style="font-size:10px;color:#D1D5DB">${fmtD(n.created_at)}</div>
+      </div>
+      <div style="font-size:12px;color:#6B7280;margin-top:2px">${safe(n.message)}</div>
+      <div style="margin-top:5px;display:flex;gap:5px">
+        ${pill(safe(n.user_type)||"user","#F3F4F6","#6B7280")}
+        ${pill(safe(n.type)||"info",(tc[n.type]||"#0A7FAF")+"22",tc[n.type]||"#0A7FAF")}
+      </div>
+    </div>`).join("")+"</div>";
+}
+
+/* ════════ KYC ════════ */
+function setKYCTab(tab){
+  _kycTab=tab;
+  ["doc","store","ambu"].forEach(x=>{const b=$("kyc-tab-"+x);if(b)b.classList.toggle("active",(tab==="doctors"&&x==="doc")||(tab==="stores"&&x==="store")||(tab==="ambulances"&&x==="ambu"));});
+  renderKYC();
+}
+function renderKYC(){
+  const c=$("kyc-content"); if(!c)return;
+  let items=[];
+  if(_kycTab==="doctors")items=ADMIN.data.docs;
+  else if(_kycTab==="stores")items=ADMIN.data.stores;
+  else items=ADMIN.data.ambus;
+  if(!items.length){c.innerHTML="<div class='empty'><div class='empty-icon'>📄</div><div class='empty-msg'>No records found.</div></div>";return;}
+  const docFields={doctors:[["Medical Council Cert","reg_number"],["Hospital Proof","hospital"],["Qualification","qualifications"]],stores:[["Drug License","drug_license_no"],["GST Certificate","gst_number"],["Address Proof","address"]],ambulances:[["Vehicle RC","vehicle_number"],["Ambulance Permit","vehicle_type"],["Driver License","phone"],["Insurance","alternate_phone"]]};
+  const fields=docFields[_kycTab]||[];
+  c.innerHTML=`<div style="display:grid;gap:12px">`+items.map(item=>{
+    const name=item.name||item.store_name||item.operator_name||"—";
+    return `<div class="dcard">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px">${avt(name,item.color||"#0A7FAF",38)}<div><div style="font-size:14px;font-weight:700;color:#1A2B3C">${safe(name)}</div><div style="font-size:12px;color:#6B7280">${safe(item.email)}</div></div></div>
+        ${pill(item.approved?"✓ Approved":"⏳ Pending",item.approved?"#D1FAE5":"#FEF3C7",item.approved?"#059669":"#D97706")}
+      </div>
+      <div>${fields.map(([label,field])=>{
+        const val=safe(item[field]);
+        const status=val?"verified":"pending";
+        return `<div class="kyc-doc ${status}">
+          <div><div style="font-size:11px;color:#9CA3AF;margin-bottom:2px">${label}</div>
+          <div style="font-size:13px;font-weight:600;color:#1A2B3C">${val||"Not Uploaded"}</div></div>
+          ${val?pill("✓ Provided","#D1FAE5","#059669"):pill("⏳ Missing","#FEF3C7","#D97706")}
+        </div>`;}).join("")}</div>
+    </div>`;
+  }).join("")+"</div>";
+}
+
+/* ════════ ADMIN MANAGEMENT ════════ */
+async function createAdmin(){
+  const name=($("new-admin-name")||{}).value?.trim();
+  const email=($("new-admin-email")||{}).value?.trim();
+  const pw=($("new-admin-pw")||{}).value;
+  const role=($("new-admin-role")||{}).value||"admin";
+  if(!name||!email||!pw){toast("Fill all fields.",true);return;}
+  if(ADMIN.user.role!=="superadmin"){toast("Only Super Admin can create admins.",true);return;}
+  try{
+    const hash=await hashPwd(pw);
+    const ex=await DB.get("admins",`email=eq.${encodeURIComponent(email)}`);
+    if(ex.length){toast("Email already exists.",true);return;}
+    await DB.post("admins",{name,email,password_hash:hash,role,is_active:true});
+    toast("Admin created! ✅");
+    if($("new-admin-name"))$("new-admin-name").value="";
+    if($("new-admin-email"))$("new-admin-email").value="";
+    if($("new-admin-pw"))$("new-admin-pw").value="";
+    ADMIN.data.admins=await DB.get("admins").catch(()=>ADMIN.data.admins);
+    renderAdmins();
+  }catch(e){toast("Error: "+e.message,true);}
+}
+function renderAdmins(){
+  const c=$("admin-list"); if(!c)return;
+  const admins=ADMIN.data.admins;
+  if(!admins.length){c.innerHTML="<div class='text-muted'>No admins found.</div>";return;}
+  const roleBg={superadmin:["#1A2B3C","#3ECF8E"],admin:["#EDE9FE","#7C4DFF"],moderator:["#E3F4FC","#0A7FAF"],support:["#D1FAE5","#059669"]};
+  c.innerHTML=`<div style="display:grid;gap:10px">`+admins.map(a=>`
+    <div style="background:#F9FAFB;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      ${avt(a.name||"A","#1A2B3C",40)}
+      <div style="flex:1;min-width:140px">
+        <div style="font-size:14px;font-weight:700;color:#1A2B3C">${safe(a.name)||"Admin"}</div>
+        <div style="font-size:12px;color:#6B7280">${safe(a.email)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${pill(safe(a.role||"admin").toUpperCase(),(roleBg[a.role]||["#F3F4F6","#6B7280"])[0],(roleBg[a.role]||["#F3F4F6","#6B7280"])[1])}
+        ${pill(a.is_active?"Active":"Inactive",a.is_active?"#D1FAE5":"#FEE2E2",a.is_active?"#059669":"#DC2626")}
+        ${ADMIN.user.role==="superadmin"&&a.email!==ADMIN.user.email?`<button class="btn btn-red btn-sm" onclick="removeAdmin('${a.id}','${safe(a.name)}')">Remove</button>`:""}
+      </div>
+    </div>`).join("")+"</div>";
+}
+async function removeAdmin(id,name){
+  if(!confirm("Remove admin "+name+"?"))return;
+  if(ADMIN.user.role!=="superadmin"){toast("Only Super Admin can remove admins.",true);return;}
+  try{
+    await DB.patch("admins","id=eq."+id,{is_active:false});
+    ADMIN.data.admins=ADMIN.data.admins.map(a=>a.id===id?{...a,is_active:false}:a);
+    toast("Admin deactivated."); renderAdmins();
+  }catch(e){toast(e.message,true);}
+}
+
+/* ════════ SUPPORT ════════ */
+function renderSupport(){
+  const c=$("support-list"); if(!c)return;
+  const msgs=ADMIN.data.support;
+  if(!msgs.length){c.innerHTML="<div class='empty'><div class='empty-icon'>💬</div><div class='empty-msg'>No support messages.</div></div>";return;}
+  c.innerHTML=`<div style="display:grid;gap:10px">`+msgs.map(m=>`
+    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        <div><div style="font-size:14px;font-weight:700;color:#1A2B3C">${safe(m.name)}</div><div style="font-size:12px;color:#9CA3AF">${safe(m.email)} · ${fmtD(m.created_at)}</div></div>
+        ${pill(m.status==="resolved"?"✅ Resolved":"🔓 Open",m.status==="resolved"?"#D1FAE5":"#FEF3C7",m.status==="resolved"?"#059669":"#D97706")}
+      </div>
+      ${m.subject?`<div style="font-size:13px;font-weight:600;color:#1A2B3C;margin-bottom:5px">Subject: ${safe(m.subject)}</div>`:""}
+      <div style="font-size:13px;color:#374151;line-height:1.6;background:#F9FAFB;border-radius:8px;padding:10px">${safe(m.message)}</div>
+      ${m.status!=="resolved"?`<button class="btn btn-green btn-sm" style="margin-top:10px" onclick="resolveMsg('${m.id}')">✅ Mark Resolved</button>`:""}
+    </div>`).join("")+"</div>";
+}
+async function resolveMsg(id){
+  try{await DB.patch("support_messages","id=eq."+id,{status:"resolved"});ADMIN.data.support=ADMIN.data.support.map(m=>m.id===id?{...m,status:"resolved"}:m);renderSupport();toast("Resolved.");}
+  catch(e){toast(e.message,true);}
+}
+
+/* ════════ INIT ════════ */
+document.addEventListener("DOMContentLoaded",()=>{
+  checkSession();
+  setTimeout(()=>$("l-email")?.focus(),100);
+});
+</script>
+</body>
+</html>
